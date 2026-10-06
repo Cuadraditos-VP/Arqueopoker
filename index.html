@@ -404,10 +404,10 @@ tr.fila-bloq td:first-child{background:#E4E8EE!important;color:#3D4756}
           <tr class="dim"><td>Anticipadas <span class="note">(ya entregadas)</span></td><td class="inp"><input class="cell" id="antic" data-k="antic" inputmode="numeric" autocomplete="off"></td><td class="n" id="eAnt"></td></tr>
           <tr><td>Inscripciones <span class="note">(incluye anticipadas)</span></td><td class="inp"><input class="cell" id="insc" data-k="insc" inputmode="numeric" autocomplete="off"></td><td class="n" id="eInsc"></td></tr>
           <tr><td>Recompras</td><td class="inp"><input class="cell" id="recomp" data-k="recomp" inputmode="numeric" autocomplete="off"></td><td class="n" id="eRec"></td></tr>
-          <tr class="total"><td>Cobrado hoy</td><td class="n" id="eTotN"></td><td class="n" id="eTot"></td></tr>
+          <tr class="total"><td>Vendido hoy</td><td class="n" id="eTotN"></td><td class="n" id="eTot"></td></tr>
         </tbody>
       </table></div>
-      <p class="note">Cobrado hoy = inscripciones + recompras − anticipadas. La plata de las anticipadas ya se entregó antes.</p>
+      <p class="note">Vendido hoy = inscripciones + recompras − anticipadas. La plata de las anticipadas ya se entregó antes.</p>
       <p class="note flag" id="eWarn" hidden>Las anticipadas no pueden ser más que las inscripciones.</p>
     </section>
 
@@ -437,11 +437,11 @@ tr.fila-bloq td:first-child{background:#E4E8EE!important;color:#3D4756}
   <div class="sheet" id="sheet-entregas" role="tabpanel" aria-labelledby="tab-entregas" hidden>
     <section class="card">
       <div class="card-head">
-        <span>Entregado <b class="n" id="aUsado"></b> de <b class="n" id="aTope"></b> cobrados hoy por entradas · <span id="aDisp"></span></span>
+        <span>Entregado <b class="n" id="aUsado"></b> de <b class="n" id="aTope"></b> Vendidos hoy por entradas · <span id="aDisp"></span></span>
         <button class="btn primary" id="btnAdd" type="button">+ Nueva entrega</button>
       </div>
       <div class="meter" id="aMeter"><i></i></div>
-      <p class="note">Armá la entrega con los billetes de la caja y tocá <b>Registrar</b>: queda guardada para el cierre y sus billetes se descuentan del conteo de caja. Solo puede salir de lo cobrado hoy por entradas; la plata de las fichas se entrega aparte.</p>
+      <p class="note">Armá la entrega con los billetes de la caja y tocá <b>Registrar</b>: queda guardada para el cierre y sus billetes se descuentan del conteo de caja. Solo puede salir de lo vendido hoy por entradas; la plata de las fichas se entrega aparte.</p>
     </section>
     <div class="entregas" id="entregas"></div>
   </div>
@@ -467,7 +467,7 @@ tr.fila-bloq td:first-child{background:#E4E8EE!important;color:#3D4756}
         <thead><tr><th>Billete</th><th>Entrega actual</th><th>+ Anticipadas</th><th>Vendido hoy</th></tr></thead>
         <tbody id="tConc"></tbody>
       </table></div>
-      <div class="result"><span>Entrega actual + anticipadas tiene que dar lo cobrado hoy por entradas</span><span id="concEstado"></span></div>
+      <div class="result"><span>Entrega actual + anticipadas tiene que dar lo vendido hoy por entradas</span><span id="concEstado"></span></div>
     </section>
   </div>
 
@@ -483,7 +483,7 @@ tr.fila-bloq td:first-child{background:#E4E8EE!important;color:#3D4756}
         <input type="file" id="fileRestore" accept=".json,application/json" hidden>
       </div>
       <div class="scroll"><table>
-        <thead><tr><th>Fecha</th><th>Hora</th><th>Tipo</th><th>Cobrado hoy</th><th>Fichas vendidas</th><th>Anticipadas</th><th>Entrega actual</th><th>Diferencia</th><th></th></tr></thead>
+        <thead><tr><th>Fecha</th><th>Hora</th><th>Tipo</th><th>Vendido hoy</th><th>Fichas vendidas</th><th>Anticipadas</th><th>Entrega actual</th><th>Diferencia</th><th></th></tr></thead>
         <tbody id="tHist"></tbody>
       </table></div>
     </section>
@@ -804,7 +804,7 @@ function datosEntradas(){
       <tr><td>Inscripciones</td><td>${miles(insc)}</td><td>${fmt(insc*valor)}</td></tr>
       <tr><td>Recompras</td><td>${miles(recomp)}</td><td>${fmt(recomp*valor)}</td></tr>
       ${antic?`<tr><td>Anticipadas</td><td>${miles(antic)}</td><td>− ${fmt(antic*valor)}</td></tr>`:''}
-      <tr class="tot"><td>Cobrado hoy</td><td>${miles(n)}</td><td>${fmt(n*valor)}</td></tr></tbody></table>`;
+      <tr class="tot"><td>Vendido hoy</td><td>${miles(n)}</td><td>${fmt(n*valor)}</td></tr></tbody></table>`;
   return {valor,n,entradas:n*valor,html};
 }
 function datosEntregas(){
@@ -844,7 +844,7 @@ function docPoker(){
     <h2>Entregas anticipadas</h2>${A.html}
     <h2>Entrega actual</h2>${tablaBilletes(act)}
     ${kv('Resultado',estado(dif))}${firmas}`;
-  const text=`Arqueo Poker · Cierre poker\n${fechaLarga()} · ${nowTime()} hs\n\nCobrado hoy: ${fmt(E.entradas)} (${miles(E.n)} entradas)\nEntregas anticipadas: ${fmt(A.total)}\nEntrega actual: ${fmt(tAct)}\n${lineasBilletes(act)}\n\nResultado: ${estado(dif)}`;
+  const text=`Arqueo Poker · Cierre poker\n${fechaLarga()} · ${nowTime()} hs\n\nVendido hoy: ${fmt(E.entradas)} (${miles(E.n)} entradas)\nEntregas anticipadas: ${fmt(A.total)}\nEntrega actual: ${fmt(tAct)}\n${lineasBilletes(act)}\n\nResultado: ${estado(dif)}`;
   return {titulo:'Cierre poker',html,text};
 }
 function docCierre(meta){
@@ -863,7 +863,7 @@ function docCierre(meta){
     <h2>Entrega actual</h2>${tablaBilletes(act)}
     ${bo?`<h2>Cierre de fichas (aparte)</h2>${tablaBilletes(S.cierre)}`:''}${firmas}`;
   const text=`Arqueo Poker · Cierre\n${F} · ${Hh} hs · ${bo?'Con bounty':'Sin bounty'}\n\n`+
-    `Cobrado hoy: ${fmt(E.entradas)} (${miles(E.n)} entradas)\n`+(bo?`Fichas vendidas: ${fmt(vendidas)}\n`:'')+
+    `Vendido hoy: ${fmt(E.entradas)} (${miles(E.n)} entradas)\n`+(bo?`Fichas vendidas: ${fmt(vendidas)}\n`:'')+
     `Entregas anticipadas: ${fmt(A.total)}\n\nDebe haber en caja: ${fmt(debe)}\nHay en caja: ${fmt(hay)}\nDiferencia: ${estado(dif,'Caja correcta')}\n\n`+
     `Entrega actual: ${fmt(sumB(act,BILLETES))}\n${lineasBilletes(act)}`+(bo?`\n\nCierre de fichas: ${fmt(sumB(S.cierre,BILLETES))}\n${lineasBilletes(S.cierre)}`:'');
   return {titulo:'Cierre del arqueo',html,text};
@@ -1057,7 +1057,7 @@ function bajar(nombre,tipo,contenido){
 const hoyArch=()=>new Date().toISOString().slice(0,10);
 $('btnCsv').onclick=()=>{
   if(!H.length){toast('No hay cierres para exportar.');return}
-  const cab=['Fecha','Hora','Tipo','Valor inscripción','Inscripciones','Anticipadas','Recompras','Entradas cobradas hoy','Cobrado hoy','Cargo de fichas','Fichas que quedan','Fichas vendidas','Cantidad de entregas anticipadas','Entregas anticipadas','Recaudado','Debe haber en caja','Hay en caja','Diferencia','Entrega actual','Cierre de fichas'];
+  const cab=['Fecha','Hora','Tipo','Valor inscripción','Inscripciones','Anticipadas','Recompras','Entradas cobradas hoy','Vendido hoy','Cargo de fichas','Fichas que quedan','Fichas vendidas','Cantidad de entregas anticipadas','Entregas anticipadas','Recaudado','Debe haber en caja','Hay en caja','Diferencia','Entrega actual','Cierre de fichas'];
   const filas=[...H].reverse().map(h=>{const c=calcular(h.estado);return [new Date(h.fecha).toLocaleDateString('es-AR'),h.hora,c.bo?'Con bounty':'Sin bounty',c.valor,c.insc,c.antic,c.recomp,c.n,c.entradas,c.bo?c.cargo:'',c.bo?c.quedan:'',c.bo?c.vendidas:'',c.nEnt,c.anticipadas,c.recaudado,c.debe,c.hay,c.dif,c.actual,c.bo?c.cierre:'']});
   const csv='﻿'+[cab,...filas].map(f=>f.map(x=>{x=String(x);return /[;"\n]/.test(x)?'"'+x.replace(/"/g,'""')+'"':x}).join(';')).join('\r\n');
   bajar(`arqueo-poker-historial-${hoyArch()}.csv`,'text/csv;charset=utf-8',csv);toast('Historial exportado. Abrilo con Excel.',true);
