@@ -7,6 +7,9 @@
 <link rel="icon" type="image/svg+xml" href="icon.svg">
 <link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">
 <link rel="apple-touch-icon" href="icon-180.png">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Arqueo Poker">
 <meta name="theme-color" content="#1d6a48">
 <title>Arqueo Poker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -198,6 +201,7 @@ input.cell.time{text-align:center;width:64px}
       <button class="tab" type="button" role="radio" id="b-si" data-b="1">Con bounty</button>
       <button class="tab" type="button" role="radio" id="b-no" data-b="0">Sin bounty</button>
     </div>
+    <button class="btn" id="btnInstalar" type="button" hidden>Instalar app</button>
     <button class="btn primary" id="btnCerrar" type="button">Cerrar arqueo</button>
     <div id="resetBox" class="confirm"><button class="btn" id="btnReset" type="button">Nuevo arqueo</button></div>
   </div>
@@ -918,5 +922,13 @@ document.querySelectorAll('.tab[data-sheet]').forEach(t=>t.addEventListener('cli
 })();
 </script>
 
+<script>
+// PWA: instalar y funcionar sin internet
+if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}
+let pedidoInstalar=null;
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();pedidoInstalar=e;document.getElementById('btnInstalar').hidden=false});
+document.getElementById('btnInstalar').addEventListener('click',async()=>{if(!pedidoInstalar)return;pedidoInstalar.prompt();await pedidoInstalar.userChoice;pedidoInstalar=null;document.getElementById('btnInstalar').hidden=true});
+addEventListener('appinstalled',()=>{document.getElementById('btnInstalar').hidden=true});
+</script>
 </body>
 </html>
