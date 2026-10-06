@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <path id="heart" d="M0,6 C-6,1 -10,-3 -10,-6 C-10,-10 -6,-12 -3,-11 C-1.5,-10.5 -0.5,-9.5 0,-8 C0.5,-9.5 1.5,-10.5 3,-11 C6,-12 10,-10 10,-6 C10,-3 6,1 0,6Z"/>
+    <path id="spade" d="M0,-11 C-6,-6 -10,-2 -10,1 C-10,5 -6,7 -3,6 C-1.6,5.6 -0.8,4.6 -0.5,3.6 L-2.2,10 L2.2,10 L0.5,3.6 C0.8,4.6 1.6,5.6 3,6 C6,7 10,5 10,1 C10,-2 6,-6 0,-11Z"/>
+    <path id="diamond" d="M0,-11 L8,0 L0,11 L-8,0Z"/>
+    <filter id="sh" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#0a2a1c" flood-opacity=".35"/></filter>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="#1d6a48"/>
+  <rect x="24" y="24" width="464" height="464" rx="92" fill="none" stroke="#2f8a5f" stroke-width="6"/>
+  <g filter="url(#sh)">
+    <!-- carta izquierda: corazón -->
+    <g transform="rotate(-22 256 450)">
+      <rect x="156" y="120" width="200" height="280" rx="22" fill="#fff"/>
+      <use href="#heart" transform="translate(186 156) scale(1.5)" fill="#c0392b"/>
+    </g>
+    <!-- carta derecha: diamante -->
+    <g transform="rotate(22 256 450)">
+      <rect x="156" y="120" width="200" height="280" rx="22" fill="#fff"/>
+      <use href="#diamond" transform="translate(326 156) scale(1.5)" fill="#c0392b"/>
+    </g>
+    <!-- carta del frente: as de pique -->
+    <g>
+      <rect x="156" y="110" width="200" height="280" rx="22" fill="#fff" stroke="#e3e9e5" stroke-width="2"/>
+      <text x="184" y="162" font-family="Georgia, 'Times New Roman', serif" font-size="46" font-weight="700" fill="#15211b">A</text>
+      <use href="#spade" transform="translate(256 262) scale(5.2)" fill="#15211b"/>
+    </g>
+  </g>
+</svg>
