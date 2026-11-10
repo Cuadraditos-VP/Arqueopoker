@@ -185,6 +185,11 @@ input.cell.fijo{background:#ECE9E3!important;color:#333!important}
 .top .btn{padding:5px 10px}
 @media (max-width:1700px){.top .fecha{display:none}}
 .hist-btns{display:flex;gap:8px;flex-wrap:wrap}
+.flist{display:grid;gap:4px}
+.frow{display:flex;align-items:center;gap:8px;padding:4px 4px 4px 10px;border:1px solid var(--line);border-radius:4px;background:var(--cell)}
+.frow .n{font-weight:600;margin-right:auto}
+.fadd{display:flex;gap:6px;align-items:center}
+.fadd input.cell{flex:1}
 td.acc{text-align:right}
 .stack{display:grid;gap:10px;align-content:start;min-width:0}
 .card{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px;display:grid;gap:8px;min-width:0}
@@ -593,7 +598,7 @@ td.auto{width:104px;min-width:88px;color:var(--area,#2F5F8A);font-weight:600}
     </section>
 
     <section id="card-fichas" class="fill card fx">
-      <div class="card-head"><h2>Fichas</h2><span class="eyebrow">cargo − lo que queda</span></div>
+      <div class="card-head"><h2>Fichas</h2><span class="eyebrow">cargo − lo que queda</span><button class="btn small" type="button" id="btnFichas">Valores</button></div>
       <div class="scroll"><table>
         <thead><tr><th>Ficha que queda</th><th>Cantidad</th><th>Subtotal</th></tr></thead>
         <tbody id="tFichas"></tbody>
@@ -722,12 +727,23 @@ td.auto{width:104px;min-width:88px;color:var(--area,#2F5F8A);font-weight:600}
     <div class="dlg-btns"><button class="btn" type="button" id="pinNo">Cancelar</button><button class="btn primary" type="submit">Aceptar</button></div>
   </form>
 </div>
+<div class="dlg" id="fdlg" role="dialog" aria-modal="true" aria-labelledby="fdlgTit" hidden>
+  <div class="dlg-box pin-box">
+    <h2 id="fdlgTit">Valores de fichas</h2>
+    <p class="note">Agregá o quitá valores. Quedan guardados para los próximos torneos.</p>
+    <div class="flist" id="fList"></div>
+    <div class="fadd"><input class="cell" id="fNueva" data-money inputmode="numeric" autocomplete="off" aria-label="Valor de la nueva ficha" placeholder="Nuevo valor"><button class="btn" type="button" id="fAdd">Agregar</button></div>
+    <div class="dlg-btns"><button class="btn primary" type="button" id="fOk">Listo</button></div>
+  </div>
+</div>
 <div id="printArea" class="doc"></div>
 
 <script>
 (function(){
 const BILLETES=[20000,10000,2000,1000,500,100];
-const FICHAS=[1000000,50000];
+const FKEY='arqueo-poker-fichas';
+let FICHAS=[1000000,50000];
+try{const f=JSON.parse(localStorage.getItem(FKEY));if(Array.isArray(f)){const l=f.map(Number).filter(n=>n>0).sort((a,b)=>b-a);if(l.length)FICHAS=l}}catch(e){}
 const KEY='arqueo-poker-v4', TABKEY='arqueo-poker-tab';
 const miles=n=>Math.round(n).toLocaleString('es-AR');
 const fmt=n=>(n<0?'−':'')+'$ '+miles(Math.abs(n));
@@ -737,6 +753,7 @@ const nowTime=()=>{const d=new Date();return String(d.getHours()).padStart(2,'0'
 const $=id=>document.getElementById(id);
 const v=x=>{const n=Number(x);return isFinite(n)&&n>0?n:0};
 const sumB=(o,list)=>list.reduce((a,d)=>a+d*v(o[d]),0);
+const sumF=o=>Object.entries(o||{}).reduce((a,[d,n])=>a+Number(d)*v(n),0);
 
 // Datos iniciales: los de la planilla arqueo poker.xlsx (conteo = lo que hay hoy en caja)
 const VACIO=()=>({bounty:true,valor:0,insc:0,antic:0,recomp:0,cargo:0,fichas:zeros(FICHAS),caja:zeros(BILLETES),cierre:zeros(BILLETES),entregas:[]});
@@ -748,7 +765,7 @@ if(!S||!S.caja)S=VACIO();
 const TKEY='arqueo-poker-torneos';
 let T=null;try{T=JSON.parse(localStorage.getItem(TKEY))}catch(e){}
 if(!T||!Array.isArray(T.lista)||!T.lista.length)T={activo:'t1',lista:[{id:'t1',S}]}; // migra el torneo que ya estaba
-T.lista.forEach(t=>{if(!t.S||!t.S.caja)t.S=VACIO();if(!t.S.definitivo)t.S.definitivoFichas=null}); // el cierre de fichas acompaña al definitivo de poker
+T.lista.forEach(t=>{if(!t.S||!t.S.caja)t.S=VACIO();if(!t.S.fichas)t.S.fichas={};if(!t.S.definitivo)t.S.definitivoFichas=null}); // el cierre de fichas acompaña al definitivo de poker
 let cur=T.lista.find(x=>x.id===T.activo)||T.lista[0];T.activo=cur.id;S=cur.S;
 const save=()=>{try{cur.S=S;localStorage.setItem(TKEY,JSON.stringify(T))}catch(e){}};
 const nombreT=st=>(st&&st.nombre)||'Torneo';
@@ -1214,11 +1231,11 @@ function docPoker(){
 }
 function docFichas(){
   const DF=S.definitivoFichas,tit=DF?'Cierre definitivo de fichas':'Cierre de fichas';
-  const quedan=sumB(S.fichas,FICHAS),apartado=sumB(S.cierre,BILLETES),cargo=v(S.cargo),suma=quedan+apartado,d=suma-cargo;
+  const quedan=sumF(S.fichas),apartado=sumB(S.cierre,BILLETES),cargo=v(S.cargo),suma=quedan+apartado,d=suma-cargo;
   const est=d===0?'Completa el cargo ✓':(d<0?'Faltan ':'Sobran ')+fmt(Math.abs(d));
   const card={tipo:'fichas',titulo:tit,sub:(S.nombre?S.nombre+' · ':'')+`${DF?DF.fecha:fechaLarga()} · ${DF?DF.hora:nowTime()} hs`,
     tablas:[
-      {nombre:'Fichas que quedan',cols:['Ficha','Cantidad','Subtotal'],rows:FICHAS.map(x=>[fmt(x),miles(v(S.fichas[x])),fmt(x*v(S.fichas[x]))]),total:['Total que queda','',fmt(quedan)]},
+      {nombre:'Fichas que quedan',cols:['Ficha','Cantidad','Subtotal'],rows:[...new Set([...FICHAS,...Object.keys(S.fichas||{}).map(Number).filter(x=>v(S.fichas[x]))])].sort((a,b)=>b-a).map(x=>[fmt(x),miles(v(S.fichas[x])),fmt(x*v(S.fichas[x]))]),total:['Total que queda','',fmt(quedan)]},
       {nombre:'Billetes que se entregan',cols:['Billete','Cantidad','Subtotal'],rows:BILLETES.map(x=>[fmt(x),miles(v(S.cierre[x])),fmt(x*v(S.cierre[x]))]),total:['Total','',fmt(apartado)]}],
     pie:[['Fichas + billetes',fmt(suma)],['Cargo inicial '+fmt(cargo),est,true]]};
   const text=`Torneo de Poker · ${tit}\n${card.sub}\n\nFichas que quedan: ${fmt(quedan)}\nBilletes que se entregan: ${fmt(apartado)}\n${lineasBilletes(S.cierre)}\n\nFichas + billetes: ${fmt(suma)}\nCargo inicial ${fmt(cargo)} · ${est}`;
@@ -1266,7 +1283,7 @@ function renderCardPNG(card){
 function docCierre(meta){
   const F=meta?meta.fecha:fechaLarga(),Hh=meta?meta.hora:nowTime(),bo=bounty();
   const E=datosEntradas(),A=datosEntregas(),act=entregaActual();
-  const quedan=sumB(S.fichas,FICHAS),vendidas=bo&&FICHAS.some(d=>v(S.fichas[d])>0)?v(S.cargo)-quedan:0;
+  const quedan=sumF(S.fichas),vendidas=bo&&Object.values(S.fichas||{}).some(n=>v(n)>0)?v(S.cargo)-quedan:0;
   const hay=sumB(S.caja,BILLETES),debe=E.entradas+vendidas-A.total,dif=hay-debe;
   const html=`<h1>Torneo de Poker · Cierre</h1><p class="sub">${S.nombre?esc(S.nombre)+' · ':''}${esc(F)} · ${esc(Hh)} hs · ${bo?'Con bounty':'Sin bounty'} · Inscripción ${fmt(E.valor)}</p>
     <h2>Entradas</h2>${E.html}
@@ -1438,7 +1455,7 @@ function calcular(st){
   const bo=st.bounty!==false;
   const valor=v(st.valor),insc=v(st.insc),antic=Math.min(v(st.antic),insc),recomp=v(st.recomp);
   const n=insc+recomp-antic,entradas=n*valor;
-  const quedan=sumB(st.fichas,FICHAS),vendidas=bo&&FICHAS.some(d=>v(st.fichas[d])>0)?v(st.cargo)-quedan:0;
+  const quedan=sumF(st.fichas),vendidas=bo&&Object.values(st.fichas||{}).some(n=>v(n)>0)?v(st.cargo)-quedan:0;
   const regs=st.entregas.filter(x=>x.reg),anticipadas=regs.reduce((a,x)=>a+sumB(x.b,BILLETES),0);
   const hay=sumB(st.caja,BILLETES),recaudado=entradas+vendidas,debe=recaudado-anticipadas;
   const cierre=bo?sumB(st.cierre,BILLETES):0;
@@ -1621,6 +1638,39 @@ function pintarCierre(c){
     };
   }
 }
+
+// ===== Valores de fichas (configurables, quedan guardados) =====
+let nuevaF=0;
+function renderFList(){
+  $('fList').innerHTML=FICHAS.map(d=>`<div class="frow"><span class="n">${fmt(d)}</span>${v(S.fichas[d])?`<span class="note">${miles(v(S.fichas[d]))} cargadas</span>`:''}<button class="btn small danger" type="button" data-fq="${d}">Quitar</button></div>`).join('');
+}
+function guardarFichas(){
+  FICHAS.sort((a,b)=>b-a);
+  try{localStorage.setItem(FKEY,JSON.stringify(FICHAS))}catch(e){}
+  denomTable('tFichas',FICHAS,()=>S.fichas,'fi');renderFList();update();
+}
+function agregarFicha(){
+  const n=nuevaF;
+  if(!n){toast('Escribí el valor de la ficha.');return}
+  if(FICHAS.includes(n)){toast(`Ya existe la ficha de ${fmt(n)}.`);return}
+  FICHAS.push(n);if(!S.fichas)S.fichas={};if(!(n in S.fichas))S.fichas[n]=0;
+  nuevaF=0;$('fNueva').value='';guardarFichas();toast(`Ficha de ${fmt(n)} agregada.`,true);$('fNueva').focus();
+}
+cell($('fNueva'),()=>nuevaF,n=>nuevaF=n);
+$('fAdd').onclick=agregarFicha;
+$('fList').addEventListener('click',ev=>{
+  const b=ev.target.closest('[data-fq]');if(!b)return;const d=Number(b.dataset.fq);
+  if(v(S.fichas[d])){toast(`Primero borrá la cantidad cargada de fichas de ${fmt(d)}.`);return}
+  if(FICHAS.length===1){toast('Tiene que quedar al menos un valor de ficha.');return}
+  FICHAS=FICHAS.filter(x=>x!==d);delete S.fichas[d];guardarFichas();
+});
+const cerrarF=()=>{$('fdlg').hidden=true;$('btnFichas').focus()};
+$('btnFichas').onclick=()=>{renderFList();nuevaF=0;$('fNueva').value='';$('fdlg').hidden=false;setTimeout(()=>$('fNueva').focus())};
+$('fOk').onclick=cerrarF;
+$('fdlg').addEventListener('keydown',ev=>{
+  if(ev.key==='Escape'){cerrarF();return}
+  if(ev.key==='Enter'&&ev.target.id==='fNueva'){ev.preventDefault();ev.stopPropagation();agregarFicha()}
+},true);
 
 buildInputs();renderEntregas();update();renderSelector();
 if(S.definitivo)setTimeout(mostrarFin,300);
