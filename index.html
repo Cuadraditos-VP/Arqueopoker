@@ -395,7 +395,6 @@ th,.card-head h2,.summary .eyebrow,.top .tab{color:#5A3A2C}
 
 /* menú desplegable de opciones */
 .top .menu{position:relative}
-.top .menu-btn{background:#fff;color:var(--ink)}
 .top .menu-panel{position:absolute;right:0;top:calc(100% + 6px);z-index:40;min-width:330px;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 10px 28px rgba(40,25,20,.22);padding:6px;display:flex;flex-direction:column;gap:2px}
 .top .menu-panel[hidden]{display:none!important}
 .top .menu-panel .menu-item,.top .menu-panel #resetBox .btn{width:100%;justify-content:flex-start;text-align:left;border:0!important;background:transparent!important;color:var(--ink)!important;box-shadow:none!important;height:auto!important;padding:10px 14px!important;font-size:19px!important;border-radius:6px!important}
@@ -406,8 +405,7 @@ th,.card-head h2,.summary .eyebrow,.top .tab{color:#5A3A2C}
 .top .menu-panel #resetBox .btn.danger{color:var(--xl-red)!important;font-weight:700}
 .top .menu-panel #btnInstalar[hidden]{display:none!important}
 .top .menu-panel #resetBox.menu-item{padding:0!important;background:transparent!important}
-.top .menu-btn{background:transparent!important;border:0!important;box-shadow:none!important;color:#000!important;font-size:26px!important;padding:0 10px!important;height:48px!important;line-height:1}
-@media (hover:hover){.top .menu-btn:hover{color:#fff!important}}
+.top .menu-btn{height:48px!important;line-height:1}
 .top .menu-btn:focus-visible{outline:2px solid #fff;outline-offset:2px}
 
 /* celdas cerradas: gris azulado con candado */
@@ -538,6 +536,65 @@ td.auto{width:104px;min-width:88px;color:var(--area,#2F5F8A);font-weight:600}
   #printArea th,#printArea td{border:1px solid #777!important}
   #printArea tr.tot td{border-top:2px solid #000!important;font-weight:700}
   #printArea th{font-weight:700}
+}
+/* ===== Diseño de la pantalla principal ===== */
+/* botón de menú visible sobre el verde */
+.top .menu-btn{background:rgba(255,255,255,.14)!important;border:1px solid rgba(255,255,255,.6)!important;color:#fff!important;font-size:20px!important;padding:0 16px!important;display:inline-flex;align-items:center;gap:8px}
+@media (hover:hover){.top .menu-btn:hover{background:rgba(255,255,255,.28)!important;color:#fff!important}}
+.top .menu-btn .ico{font-size:24px;line-height:1}
+/* datos fijos del torneo: se leen como dato, no como campo para escribir */
+.top .top-valores .valor input.cell.fijo{background:#F4F1EC url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='%23857C70' d='M5 7V5a3 3 0 0 1 6 0v2h.5A1.5 1.5 0 0 1 13 8.5v5a1.5 1.5 0 0 1-1.5 1.5h-7A1.5 1.5 0 0 1 3 13.5v-5A1.5 1.5 0 0 1 4.5 7H5zm1.5 0h3V5a1.5 1.5 0 0 0-3 0v2z'/%3E%3C/svg%3E") no-repeat 12px center/15px!important;color:#2B2622!important;font-weight:700;cursor:default;box-shadow:none!important}
+@media (max-width:760px){
+  .top .acciones{gap:6px}
+  .top .acciones .btn{height:36px!important;font-size:15px!important;padding:0 12px!important}
+  .top .menu-btn .txt{display:none}
+  .top .menu-btn .ico{font-size:20px}
+}
+/* títulos de los recuadros: todos alineados a la izquierda, botones a la derecha */
+.sheet .card-head{justify-content:flex-start!important;align-items:center;min-height:40px}
+.sheet .card-head h2{text-align:left;margin-right:auto}
+/* celdas para escribir: recuadro visible, distinto de los subtotales calculados */
+.sheet td.inp{padding:3px!important}
+.sheet td.inp input.cell:not([readonly]):not(.bloq){border:1px solid #CFC5B8!important;border-radius:5px!important;background:#FFFEFA!important;min-height:32px}
+.sheet td.inp input.cell:not([readonly]):not(.bloq):hover{border-color:#A99D8E!important}
+.sheet td.inp input.cell:not([readonly]):not(.bloq):focus{border-color:var(--xl-sel,#217346)!important;box-shadow:0 0 0 2px rgba(33,115,70,.25)!important}
+/* avisos que todavía no son un resultado */
+.result b.pend{font:600 15px var(--f-body,inherit)!important;color:#8A5A00}
+@media (max-width:760px){
+  .sheet td.inp input.cell:not([readonly]):not(.bloq){min-height:38px}
+}
+
+/* ===== Pulido visual: colores, bordes, proporciones y letras ===== */
+:root{--line:#D3C8BC;--linea-total:#8C7F73}
+/* menos aire arriba de todo */
+.wrap{padding-top:24px}
+/* título: un poco más chico y más espaciado */
+.top h1{font-size:30px!important;letter-spacing:.08em}
+/* pestañas sobre el verde: claras las inactivas, blanca la activa (sin subrayado rojo) */
+.top .tabs{border:1px solid rgba(255,255,255,.35)!important;background:rgba(255,255,255,.08)!important}
+.top .tab{background:transparent!important;color:rgba(255,255,255,.88)!important;border-right:1px solid rgba(255,255,255,.25)!important;font-size:19px!important;padding:8px 18px!important}
+.top .tab:last-child{border-right:0!important}
+.top .tab[aria-selected="true"]{background:#fff!important;color:var(--top,#24543F)!important;font-weight:700;box-shadow:none!important}
+@media (hover:hover){.top .tab:not([aria-selected="true"]):hover{background:rgba(255,255,255,.16)!important}}
+/* puntos de estado: tonos claros sobre el verde, colores normales en la pestaña activa */
+.top .tab:not([aria-selected="true"]) .dot{background:#8FD9B2}
+.top .tab:not([aria-selected="true"]) .dot.bad{background:#FF9C90}
+.top .tab:not([aria-selected="true"]) .dot.warn{background:#F7C873}
+/* recuadros: título pegado a su tabla, esquinas parejas */
+.sheet .card-head{border-radius:10px 10px 0 0!important;padding:8px 14px}
+.sheet .card-head h2{font-size:18px;font-weight:700;letter-spacing:.02em}
+.sheet .card-head + .scroll{margin-top:-6px;border-top:0!important;border-radius:0 0 10px 10px!important}
+.result,.cuentas,.entrega,.dlg-box{border-radius:10px!important}
+/* tablas: encabezados más livianos, líneas finas y claras, total marcado */
+.sheet th{font-size:11.5px;letter-spacing:.06em;color:#5A4E46!important;font-weight:700}
+.sheet td{border-color:var(--line)!important}
+.sheet tr.total td,.sheet tr.tot td{border-top:2px solid var(--linea-total)!important;font-weight:700}
+/* números: misma altura de cifra y alineados */
+td,.result b,.valor input.cell,.difbox{font-variant-numeric:tabular-nums lining-nums}
+@media (max-width:760px){
+  .top h1{font-size:21px!important;letter-spacing:.06em}
+  .top .tab{font-size:14px!important;padding:7px 6px!important}
+  .sheet .card-head h2{font-size:16px}
 }
 </style>
 
@@ -1067,7 +1124,7 @@ function update(){
   FICHAS.forEach(d=>$('fi-s-'+d).textContent=fmt(d*v(S.fichas[d])));
   const quedan=sumB(S.fichas,FICHAS);$('fi-tot').textContent=fmt(quedan);
   const contadas=FICHAS.some(d=>v(S.fichas[d])>0);
-  const vendidas=bo&&contadas?v(S.cargo)-quedan:0;$('fVend').textContent=contadas?fmt(vendidas):'Falta contar las fichas';
+  const vendidas=bo&&contadas?v(S.cargo)-quedan:0;$('fVend').textContent=contadas?fmt(vendidas):'Falta contar las fichas';$('fVend').classList.toggle('pend',!contadas);
   $('fWarn').hidden=!bo||vendidas>=0;
   // Cierre de fichas automático: billetes disponibles en caja, de mayor a menor
   S.cierre=bo?armarCierre(Math.max(0,vendidas)):zeros(BILLETES);
@@ -1161,7 +1218,7 @@ function update(){
    const rb=$('resetBox');if(rb)rb.hidden=!(vacio||cerrado);}
   save();
 }
-document.querySelectorAll('[data-b]').forEach(b=>b.addEventListener('click',()=>{if(S.datosFijos){if((b.dataset.b==='1')!==bounty())toast('El tipo de torneo quedó fijo. Para cambiarlo: menú ▼ › Corregir datos del torneo.');return}S.bounty=b.dataset.b==='1';update()}));
+document.querySelectorAll('[data-b]').forEach(b=>b.addEventListener('click',()=>{if(S.datosFijos){if((b.dataset.b==='1')!==bounty())toast('El tipo de torneo quedó fijo. Para cambiarlo: menú ☰ › Corregir datos del torneo.');return}S.bounty=b.dataset.b==='1';update()}));
 // ===== Comprobantes: imprimir y compartir =====
 const fechaLarga=()=>new Date().toLocaleDateString('es-AR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
 const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -1567,7 +1624,7 @@ function aplicarBloqueos(){
     const on=(defF&&(esFicha||esApartado))||(def&&!esFicha);
     i.readOnly=on;i.classList.toggle('bloq',on);i.title=on?'Cierre definitivo hecho. Para cambiar, anulalo con clave.':''});
   // Inscripción y cargo quedan fijos desde que se inicia el torneo
-  if(S.datosFijos)['valor','cargo'].forEach(id=>{const i=$(id);if(!i)return;i.readOnly=true;i.classList.add('fijo');i.title='Dato fijo del torneo. Se corrige desde el menú ▼ con clave.'});
+  if(S.datosFijos)['valor','cargo'].forEach(id=>{const i=$(id);if(!i)return;i.readOnly=true;i.classList.add('fijo');i.title='Dato fijo del torneo. Se corrige desde el menú ☰ con clave.'});
   const add=$('btnAdd');if(add&&def)add.disabled=true;
   document.querySelector('.wrap').classList.toggle('es-definitivo',def);
 }
@@ -1745,7 +1802,7 @@ document.querySelectorAll('.tab[data-sheet]').forEach(t=>t.addEventListener('cli
 (function(){
   const top=document.querySelector('.top');const g=document.createElement('div');g.className='acciones menu';
   const btn=document.createElement('button');btn.type='button';btn.className='btn menu-btn';btn.id='btnMenu';
-  btn.setAttribute('aria-haspopup','true');btn.setAttribute('aria-expanded','false');btn.innerHTML='<span aria-hidden="true">▼</span>';btn.setAttribute('aria-label','Opciones');btn.title='Opciones';
+  btn.setAttribute('aria-haspopup','true');btn.setAttribute('aria-expanded','false');btn.innerHTML='<span class="ico" aria-hidden="true">☰</span><span class="txt">Menú</span>';btn.setAttribute('aria-label','Opciones');btn.title='Opciones';
   const panel=document.createElement('div');panel.className='menu-panel';panel.id='menuPanel';panel.hidden=true;panel.setAttribute('role','menu');
   ['btnCerrar','btnLockAntic','btnLockInsc','btnDatos','btnAgregar','btnAnularT','tab-historial','resetBox','btnAjuste','btnInstalar'].forEach(id=>{const el=document.getElementById(id);if(el){el.classList.add('menu-item');panel.appendChild(el)}});
   const h=document.getElementById('tab-historial');if(h){h.removeAttribute('role');h.innerHTML='Historial de cierres'}
